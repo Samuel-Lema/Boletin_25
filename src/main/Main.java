@@ -2,11 +2,13 @@ package main;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 public class Main extends javax.swing.JFrame implements ActionListener {
 
+    private ArrayList<Integer> numGenerados = new ArrayList<>();
     private int posicion = 1;
     private int correctos = 0;
     private int x = 10;
@@ -36,7 +38,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             boton.setBounds(0 + x, 0 + y, 48, 25);
             this.add(boton);
         }
-
+        
         // Deshabilita la edición de las cajas de texto
         
         tf1.setEditable(false);
@@ -50,16 +52,16 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         
         btnBonoloto.addActionListener((ActionEvent e) -> {
             
-            tfWin1.setText(String.valueOf((int) (Math.random() * 50) + 1));
-            tfWin2.setText(String.valueOf((int) (Math.random() * 50) + 1));
-            tfWin3.setText(String.valueOf((int) (Math.random() * 50) + 1));
-            tfWin4.setText(String.valueOf((int) (Math.random() * 50) + 1));
-            tfWin5.setText(String.valueOf((int) (Math.random() * 50) + 1));
-            tfWin6.setText(String.valueOf((int) (Math.random() * 50) + 1));
+            tfWin1.setText(String.valueOf(comprobarRepetidos()));
+            tfWin2.setText(String.valueOf(comprobarRepetidos()));
+            tfWin3.setText(String.valueOf(comprobarRepetidos()));
+            tfWin4.setText(String.valueOf(comprobarRepetidos()));
+            tfWin5.setText(String.valueOf(comprobarRepetidos()));
+            tfWin6.setText(String.valueOf(comprobarRepetidos()));
             
             getCorrectNumbers();
         });
-        
+
         // Gestiono el evento del boton "Nuevo Sorteo", maneja el reinicio de los numeros dados
         
         btnClean.addActionListener((ActionEvent e) -> {
@@ -83,36 +85,23 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             
             btnBonoloto.setEnabled(true);
             lbMessage.setText("");
+            numGenerados.clear();
         });
     }
     
-    // Compara los números dados y los generados aleatoriamente. Muestra el número de aciertos
-    
-    public void getCorrectNumbers(){
+    public int comprobarRepetidos(){
         
-        if (tf1.getText().equals(tfWin1.getText())){
-            correctos += 1;
-        }
-        if(tf2.getText().equals(tfWin2.getText())){
-            correctos += 1;
-        }
-        if(tf3.getText().equals(tfWin3.getText())){
-            correctos += 1;
-        }
-        if(tf4.getText().equals(tfWin4.getText())){
-            correctos += 1;
-        }
-        if(tf5.getText().equals(tfWin5.getText())){
-            correctos += 1;
-        }
-        if(tf6.getText().equals(tfWin6.getText())){
-            correctos += 1;
-        }
+        int num = 0;
         
-        btnBonoloto.setEnabled(false);
-        lbMessage.setText(correctos + " aciertos.");
+        do {
+            num = (int) (Math.random() * 50) + 1;
+        } while (numGenerados.indexOf(num) != -1);
+
+        numGenerados.add(num);
+        
+        return num;
     }
-            
+                    
     // Gestiona la introducion de número de todos los botones
     
     @Override public void actionPerformed(ActionEvent e){
@@ -129,7 +118,31 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             default: JOptionPane.showMessageDialog(null, "Ya se han insertado todos los números."); break;
         }
         
+        // ((JButton) e.getSource()).setEnabled(false); // Prueba para deshabilitar botones
+        
         posicion += 1;
+    }
+    
+    // Compara los números dados y los generados aleatoriamente. Muestra el número de aciertos
+    
+    public void getCorrectNumbers(){
+        
+        if (numGenerados.contains(Integer.parseInt(tf1.getText()))) {
+            correctos += 1;
+        } else if (numGenerados.contains(Integer.parseInt(tf2.getText()))) {
+            correctos += 1;
+        } else if (numGenerados.contains(Integer.parseInt(tf3.getText()))) {
+            correctos += 1;
+        } else if (numGenerados.contains(Integer.parseInt(tf4.getText()))) {
+            correctos += 1;
+        } else if (numGenerados.contains(Integer.parseInt(tf5.getText()))) {
+            correctos += 1;
+        } else if (numGenerados.contains(Integer.parseInt(tf6.getText()))) {
+            correctos += 1;
+        }
+        
+        btnBonoloto.setEnabled(false);
+        lbMessage.setText(correctos + " aciertos.");
     }
 
     @SuppressWarnings("unchecked")
